@@ -1,6 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+
+	"github.com/gorilla/mux"
+)
 
 // Course Model
 type Course struct {
@@ -25,4 +31,37 @@ func (c *Course) IsEmpty() bool {
 
 func main() {
 	fmt.Println("API in Go")
+}
+
+// Controllers
+
+// Home route
+func serveHome(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("<h1>Hello World</h1>"))
+}
+
+func getAllCourses(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Get all courses")
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(courses)
+}
+
+func getOneCourse(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Get one course")
+	w.Header().Set("Content-Type", "application/json")
+
+	// get id from request
+	params := mux.Vars(r)
+
+	for key, value := range params {
+		fmt.Printf("Key is :%v, Value is :%v\n", key, value)
+	}
+
+	for _, course := range courses {
+		if course.CourseID == params["id"] {
+			json.NewEncoder(w).Encode(course)
+		}
+	}
+
+	json.NewEncoder(w).Encode("No course found with given ID")
 }
