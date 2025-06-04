@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -35,6 +36,14 @@ func (c *Course) IsEmpty() bool {
 
 func main() {
 	fmt.Println("API in Go")
+	r := mux.NewRouter()
+	r.HandleFunc("/", serveHome)
+	r.HandleFunc("/course", getAllCourses).Methods("GET")
+	r.HandleFunc("/course/{id}", getCourseById).Methods("GET")
+	r.HandleFunc("/course", createCourse).Methods("POST")
+	r.HandleFunc("/course/{id}", updateOneCourse).Methods("PATCH")
+	r.HandleFunc("/course/{id}", deleteCourseById).Methods("DELETE")
+	log.Fatal(http.ListenAndServe(":4000", r))
 }
 
 // Controllers
@@ -110,6 +119,7 @@ func updateOneCourse(w http.ResponseWriter, r *http.Request) {
 			updatedCourse.CourseID = params["id"]
 			courses = append(courses, updatedCourse)
 			json.NewEncoder(w).Encode(updatedCourse)
+			return
 		}
 	}
 
@@ -121,11 +131,13 @@ func deleteCourseById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	params := mux.Vars(r)
+	fmt.Println("Vars: ", params)
 
 	for index, course := range courses {
 		if course.CourseID == params["id"] {
 			courses = append(courses[:index], courses[index+1:]...)
 			json.NewEncoder(w).Encode("Course Deleted")
+			return
 		}
 	}
 
