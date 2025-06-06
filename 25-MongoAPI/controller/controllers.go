@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Sambit99/Go-Basics/MongoAPI/model"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
@@ -42,4 +43,17 @@ func init() {
 	// 		panic(err)
 	// 	}
 	// }()
+}
+
+// MongoDB Helpers
+
+// insert 1 record
+func insertOneMovie(movie model.Netflix) {
+	newRecord, err := collection.InsertOne(context.Background(), movie)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Inserted 1 movie in db with id: ", newRecord.InsertedID)
 }
