@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/Sambit99/Go-Basics/MongoAPI/model"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
@@ -56,4 +57,24 @@ func insertOneMovie(movie model.Netflix) {
 	}
 
 	fmt.Println("Inserted 1 movie in db with id: ", newRecord.InsertedID)
+}
+
+// Update 1 record
+func updateOneMovie(movieId string) {
+	id, err := bson.ObjectIDFromHex(movieId)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": bson.M{"watched": true}}
+
+	result, err := collection.UpdateOne(context.Background(), filter, update)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Modified count: ", result.ModifiedCount)
 }
