@@ -17,6 +17,8 @@ const colName = "watchlist"
 
 var collection *mongo.Collection
 
+var ctx = context.Background()
+
 func init() {
 	// Mongo Client Options
 	clientOptions := options.Client().ApplyURI(connectionString)
@@ -110,4 +112,30 @@ func deleteAllMovies() int64 {
 	fmt.Println("Deleted Records count: ", result.DeletedCount)
 
 	return result.DeletedCount
+}
+
+// Get all movies
+func getAllMovies() []bson.M {
+	cursor, err := collection.Find(ctx, bson.M{}, nil)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var movies []bson.M
+	for cursor.Next(ctx) {
+		var movie bson.M
+
+		if err = cursor.Decode(&movie); err != nil {
+			log.Fatal(err)
+		}
+
+		movies = append(movies, movie)
+	}
+
+	defer cursor.Close(ctx)
+
+	fmt.Println("Records: ", movies)
+
+	return movies
 }
