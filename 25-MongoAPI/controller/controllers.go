@@ -147,6 +147,8 @@ func getAllMovies() []bson.M {
 
 func GetAllMovies(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
+	w.Header().Set("Allow-Control-Allow-Methods", "GET")
+	w.WriteHeader(http.StatusOK)
 
 	allMovies := getAllMovies()
 	json.NewEncoder(w).Encode(allMovies)
@@ -155,6 +157,7 @@ func GetAllMovies(w http.ResponseWriter, r *http.Request) {
 func CreateMovie(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Allow-Control-Allow-Methods", "POST")
+	w.WriteHeader(http.StatusCreated)
 
 	var movie model.Netflix
 
@@ -172,6 +175,7 @@ func CreateMovie(w http.ResponseWriter, r *http.Request) {
 func MarkAsWatched(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Allow-Control-Allow-Methods", "PATCH")
+	w.WriteHeader(http.StatusOK)
 
 	params := mux.Vars(r)
 
@@ -185,6 +189,8 @@ func DeleteMovie(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
+	w.WriteHeader(http.StatusNoContent)
+
 	params := mux.Vars(r)
 
 	deleteOneMovie(params["id"])
@@ -196,6 +202,7 @@ func DeleteAllMovie(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/x-www-form-urlencoded")
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
+	w.WriteHeader(http.StatusNoContent)
 
 	count := deleteAllMovies()
 
