@@ -8,6 +8,9 @@ import (
 )
 
 var wg sync.WaitGroup
+var mut sync.Mutex
+
+var signals = []string{"test"}
 
 func main() {
 	// go greeter("Hello")
@@ -27,6 +30,7 @@ func main() {
 	}
 
 	wg.Wait()
+	fmt.Println(signals)
 
 }
 
@@ -43,7 +47,12 @@ func getStatusCode(endpoint string) {
 
 	if err != nil {
 		log.Fatal(err)
+	} else {
+		mut.Lock()
+		signals = append(signals, endpoint)
+		mut.Unlock()
+		fmt.Printf("%d statuscode for %s \n", result.StatusCode, endpoint)
+
 	}
 
-	fmt.Printf("%d statuscode for %s \n", result.StatusCode, endpoint)
 }
